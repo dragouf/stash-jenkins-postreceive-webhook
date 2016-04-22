@@ -28,6 +28,9 @@ Once installed, follow these steps:
 
 ## Release Notes
 
+### Version 4.0.0
+- new package name
+
 ### Version 3.0.1
 - Fix to XSRF bug in Trigger Button (thanks [JonMR](https://github.com/JonMR) for the PR)
 - Fix sha1 for test triggers and prevent sha1=null in URLs (thanks [SuperTux88](https://github.com/SuperTux88) for the PR)
