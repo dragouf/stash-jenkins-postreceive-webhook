@@ -41,8 +41,7 @@ public class Notifier implements DisposableBean {
   /**
    * Key for the repository hook
    */
-  public static final String KEY =
-      "com.dragouf.bitbucket-webhook-jenkins:jenkinsPostReceiveHook";
+  public static final String KEY = "com.dragouf.bitbucket-webhook-jenkins:jenkinsPostReceiveHook";
 
   /**
    * Field name for the Jenkins base URL property

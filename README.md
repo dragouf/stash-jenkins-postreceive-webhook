@@ -12,7 +12,7 @@ Once installed, follow these steps:
 -  Navigate to a repository in Bitbucket Server.
 -  Hit the *Settings* link
 -  In the left-navigation, hit the *Hooks* link
--  For the **Stash Webhook to Jenkins**, click the *Enable* button.
+-  For the **Bitbucket Webhook to Jenkins**, click the *Enable* button.
 -  Enter the URL to your Jenkins instance
 -  Select the method that clone method that Jenkins is using (HTTP or SSH).
 -  If using HTTP, enter the username that Jenkins is using to clone your repository.

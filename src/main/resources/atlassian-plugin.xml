@@ -39,14 +39,14 @@
             <param-name>extension.filter.excludes</param-name>
             <param-value>.*</param-value>
         </init-param>
-        <package>com.dragouf.stash.webhook.rest</package>
+        <package>com.dragouf.bitbucket.webhook.rest</package>
     </rest>
     
     <repository-hook key="jenkinsPostReceiveHook" name="${project.name}" class="com.dragouf.bitbucket.webhook.PostReceiveHook">
         <description>Webhook for notifying a configured endpoint of changes to this repository.</description>
         <icon>icons/icon.png</icon>
         <config-form name="Simple Hook Config" key="simpleHook-config">
-            <view>com.dragouf.stash.webhook.formContents</view>
+            <view>com.dragouf.bitbucket.webhook.formContents</view>
             <directory location="/static/"/>
         </config-form>
     </repository-hook>
@@ -55,11 +55,11 @@
         <directory location="/static/">
             <exclude>/**/*.soy</exclude>
         </directory>
-        <context>com.dragouf.stash.webhook</context>
+        <context>com.dragouf.bitbucket.webhook</context>
         <dependency>com.atlassian.auiplugin:aui-experimental-spinner</dependency>
     </client-resource>
     
-    <web-item key="stash.jenkinshook.trigger" name="Trigger Build" weight="50" section="bitbucket.pull-request.toolbar.actions">
+    <web-item key="bitbucket.jenkinshook.trigger" name="Trigger Build" weight="50" section="bitbucket.pull-request.toolbar.actions">
         <conditions type="AND">
             <condition class="com.atlassian.bitbucket.web.conditions.PullRequestInState">
                 <param name="state">OPEN</param>
@@ -68,7 +68,7 @@
             <condition class="com.dragouf.bitbucket.webhook.conditions.WebhookIsEnabledCondition" />
             <condition class="com.dragouf.bitbucket.webhook.conditions.TriggerBuildButtonEnabledCondition" />
         </conditions>
-        <label key="stash.web.pull-request.toolbar.triggerJenkins">Trigger Build</label>
+        <label key="bitbucket.web.pull-request.toolbar.triggerJenkins">Trigger Build</label>
         <styleClass>triggerJenkinsBuild</styleClass>
         <dependency>${project.groupId}-${project.artifactId}:jenkins-pr-triggerbutton</dependency>
     </web-item>
