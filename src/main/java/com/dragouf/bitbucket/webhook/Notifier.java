@@ -74,6 +74,11 @@ public class Notifier implements DisposableBean {
   public static final String OMIT_BRANCH_NAME = "omitBranchName";
 
   /**
+   * Field name for the Hipchat Username type property
+   */
+  public static final String HIPCHAT_USER_CONF = "HipchatUser";
+
+  /**
    * Field name for the ignore committers property
    */
   public static final String IGNORE_COMMITTERS = "ignoreCommitters";
@@ -90,9 +95,11 @@ public class Notifier implements DisposableBean {
 
   private static final Logger LOGGER =
       LoggerFactory.getLogger(Notifier.class);
-  private static final String BASE_URL = "%s/git/notifyCommit?url=%s";
+  private static final String BASE_URL = "%s?GIT_URL=%s";
   private static final String HASH_URL_PARAMETER = "&sha1=%s";
-  private static final String BRANCH_URL_PARAMETER = "&branches=%s";
+  private static final String BRANCH_URL_PARAMETER = "&GIT_BRANCH=%s";
+  private static final String PULLREQUEST_ID = "&PULLREQUEST_ID=%s";
+  private static final String HIPCHAT_USER = "&HIPCHAT_USER=%s";
 
   private final HttpClientFactory httpClientFactory;
   private final SettingsService settingsService;
@@ -133,11 +140,11 @@ public class Notifier implements DisposableBean {
    */
   @Nonnull
   public Future<NotificationResult> notifyBackground(@Nonnull final Repository repo, //CHECKSTYLE:annot
-      final String strRef, final String strSha1) {
+      final String strRef, final String strSha1, final String prId) {
     return executorService.submit(new Callable<NotificationResult>() {
       @Override
       public NotificationResult call() throws Exception {
-        return Notifier.this.notify(repo, strRef, strSha1);
+        return Notifier.this.notify(repo, strRef, strSha1, prId);
       }
     });
   }
@@ -150,7 +157,7 @@ public class Notifier implements DisposableBean {
    * @return Text result from Jenkins
    */
   public @Nullable NotificationResult notify(@Nonnull Repository repo, //CHECKSTYLE:annot
-      String strRef, String strSha1) {
+      String strRef, String strSha1, String prId) {
     final RepositoryHook hook = settingsService.getRepositoryHook(repo);
     final Settings settings = settingsService.getSettings(repo);
     if (hook == null || !hook.isEnabled() || settings == null) {
@@ -162,7 +169,8 @@ public class Notifier implements DisposableBean {
         settings.getBoolean(IGNORE_CERTS, false),
         settings.getString(CLONE_TYPE),
         settings.getString(CLONE_URL),
-        strRef, strSha1,
+        strRef, strSha1, prId,
+        settings.getString(HIPCHAT_USER_CONF),
         settings.getBoolean(OMIT_HASH_CODE, false),
         settings.getBoolean(OMIT_BRANCH_NAME, false));
   }
@@ -181,16 +189,33 @@ public class Notifier implements DisposableBean {
    * @param omitBranchName Defines whether the commit's branch name is omitted
    * @return The notification result.
    */
-  public @Nullable NotificationResult notify(@Nonnull Repository repo, //CHECKSTYLE:annot
-      String jenkinsBase, boolean ignoreCerts, String cloneType, String cloneUrl,
-      String strRef, String strSha1, boolean omitHashCode, boolean omitBranchName) {
+  public @Nullable NotificationResult notify(
+    @Nonnull Repository repo, //CHECKSTYLE:annot
+    String jenkinsBase,
+    boolean ignoreCerts,
+    String cloneType,
+    String cloneUrl,
+    String strRef,
+    String strSha1,
+    String prId,
+    String hipchatUser,
+    boolean omitHashCode,
+    boolean omitBranchName) {
 
     HttpClient client = null;
     String url;
 
     try {
-        url = getUrl(repo, maybeReplaceSlash(jenkinsBase),
-            cloneType, cloneUrl, strRef, strSha1, omitHashCode, omitBranchName);
+        url = getUrl(repo,
+          maybeReplaceSlash(jenkinsBase),
+          cloneType,
+          cloneUrl,
+          strRef,
+          strSha1,
+          prId,
+          hipchatUser,
+          omitHashCode,
+          omitBranchName);
     } catch (Exception e) {
         LOGGER.error("Error getting Jenkins URL", e);
         return new NotificationResult(false, null, e.getMessage());
@@ -238,30 +263,46 @@ public class Notifier implements DisposableBean {
    *        in notification to Jenkins.
    * @return The url to use for notifying Jenkins
    */
-  protected String getUrl(final Repository repository, final String jenkinsBase,
-      final String cloneType, final String customCloneUrl, final String strRef, final String strSha1, boolean omitHashCode, boolean omitBranchName) {
+  protected String getUrl(final Repository repository,
+                          final String jenkinsBase,
+                          final String cloneType,
+                          final String customCloneUrl,
+                          final String strRef,
+                          final String strSha1,
+                          final String prId,
+                          final String hipchatUser,
+                          boolean omitHashCode,
+                          boolean omitBranchName) {
       String cloneUrl = customCloneUrl;
     // Older installs won't have a cloneType value - treat as custom
     if (cloneType != null && !cloneType.equals("custom")) {
-        if (cloneType.equals("http")) {
-            cloneUrl = httpScmProtocol.getCloneUrl(repository, null);
-        } else if (cloneType.equals("ssh")) {
-            // The user just pushed to the repo, so must have had access
-            cloneUrl = securityService.withPermission(Permission.REPO_READ, "Retrieving SSH clone url")
-                    .call(() -> scmProtocol.getCloneUrl(repository, null));
-        } else {
-            LOGGER.error("Unknown cloneType: {}", cloneType);
-            throw new RuntimeException("Unknown cloneType: " + cloneType);
-        }
+      switch (cloneType) {
+        case "http":
+          cloneUrl = httpScmProtocol.getCloneUrl(repository, null);
+          break;
+        case "ssh":
+          // The user just pushed to the repo, so must have had access
+          cloneUrl = securityService.withPermission(Permission.REPO_READ, "Retrieving SSH clone url")
+            .call(() -> scmProtocol.getCloneUrl(repository, null));
+          break;
+        default:
+          LOGGER.error("Unknown cloneType: {}", cloneType);
+          throw new RuntimeException("Unknown cloneType: " + cloneType);
+      }
     }
 
     StringBuilder url = new StringBuilder();
+
     url.append(String.format(BASE_URL, jenkinsBase, urlEncode(cloneUrl)));
 
     if(strRef != null && !omitBranchName)
       url.append(String.format(BRANCH_URL_PARAMETER, urlEncode(strRef)));
     if(strSha1 != null && !omitHashCode)
       url.append(String.format(HASH_URL_PARAMETER, strSha1));
+    if(omitBranchName)
+      url.append(String.format(PULLREQUEST_ID, prId));
+
+    url.append(String.format(HIPCHAT_USER, hipchatUser));
 
     return url.toString();
   }

@@ -1,4 +1,4 @@
-{namespace com.dragouf.bitbucket.webhook}
+{namespace com.dragouf.stash.webhook}
 
 /**
  * @param config
@@ -11,15 +11,15 @@
         {param isRequired: true /}
         {param value: $config['jenkinsBase'] /}
         {param labelContent}
-            {getText('bitbucket.webhook.jenkins.url.label')}
+            {getText('stash.webhook.jenkins.url.label')}
         {/param}
-        {param descriptionText: getText('bitbucket.webhook.jenkins.url.description') /}
+        {param descriptionText: getText('stash.webhook.jenkins.url.description') /}
         {param extraClasses: 'long' /}
         {param errorTexts: $errors ? $errors['jenkinsBase'] : null /}
     {/call}
 
     <div class="field-group">
-        <label for="gitRepoUrl">{getText('bitbucket.webhook.repo.cloneUrl.label')}</label>
+        <label for="gitRepoUrl">{getText('stash.webhook.repo.cloneUrl.label')}</label>
         <select class="select" id="cloneType" name="cloneType" style="max-width: 90px">
             <option value="http" {($config['cloneType'] == 'http') ? 'selected="selected"' : ''}>HTTP</option>
             <option value="ssh" {($config['cloneType'] == 'ssh') ? 'selected="selected"' : ''}>SSH</option>
@@ -28,7 +28,7 @@
         &nbsp;
         <input id="gitRepoUrl" style="max-width: 400px" class="text" type="text" name="gitRepoUrl" value="{($config['gitRepoUrl'] != null) ? $config['gitRepoUrl'] : ''}">
         <div class="description">
-            {getText('bitbucket.webhook.repo.cloneUrl.description')}
+            {getText('stash.webhook.repo.cloneUrl.description')}
         </div>
     </div>
 
@@ -36,81 +36,81 @@
         {param id: 'ignoreCerts' /}
         {param checked: $config['ignoreCerts'] /}
         {param labelContent}
-            {getText('bitbucket.webhook.ignoreCerts.label')}
+            {getText('stash.webhook.ignoreCerts.label')}
         {/param}
         {param labelHtml}
-            {getText('bitbucket.webhook.ignoreCerts.label')}
+            {getText('stash.webhook.ignoreCerts.label')}
         {/param}
-        {param description: getText('bitbucket.webhook.ignoreCerts.description') /}
+        {param description: getText('stash.webhook.ignoreCerts.description') /}
     {/call}
 
     {call widget.aui.form.checkbox}
         {param id: 'omitHashCode' /}
         {param checked: $config['omitHashCode'] /}
         {param labelContent}
-            {getText('bitbucket.webhook.omitHashCode.label')}
+            {getText('stash.webhook.omitHashCode.label')}
         {/param}
         {param labelHtml}
-            {getText('bitbucket.webhook.omitHashCode.label')}
+            {getText('stash.webhook.omitHashCode.label')}
         {/param}
-        {param description: getText('bitbucket.webhook.omitHashCode.description') /}
+        {param description: getText('stash.webhook.omitHashCode.description') /}
     {/call}
 
     {call widget.aui.form.checkbox}
         {param id: 'omitBranchName' /}
         {param checked: $config['omitBranchName'] /}
         {param labelContent}
-            {getText('bitbucket.webhook.omitBranchName.label')}
+            {getText('stash.webhook.omitBranchName.label')}
         {/param}
         {param labelHtml}
-            {getText('bitbucket.webhook.omitBranchName.label')}
+            {getText('stash.webhook.omitBranchName.label')}
         {/param}
-        {param description: getText('bitbucket.webhook.omitBranchName.description') /}
+        {param description: getText('stash.webhook.omitBranchName.description') /}
     {/call}
 
     {call widget.aui.form.checkbox}
             {param id: 'omitTriggerBuildButton' /}
             {param checked: $config['omitTriggerBuildButton'] /}
             {param labelContent}
-                {getText('bitbucket.webhook.omitTriggerBuildButton.label')}
+                {getText('stash.webhook.omitTriggerBuildButton.label')}
             {/param}
             {param labelHtml}
-                {getText('bitbucket.webhook.omitTriggerBuildButton.label')}
+                {getText('stash.webhook.omitTriggerBuildButton.label')}
             {/param}
-            {param description: getText('bitbucket.webhook.omitTriggerBuildButton.description') /}
+            {param description: getText('stash.webhook.omitTriggerBuildButton.description') /}
     {/call}
 
     {call widget.aui.form.field}
         {param id: 'test-form' /}
-        {param labelContent: getText('bitbucket.webhook.test') /}
-        {param labelHtml: getText('bitbucket.webhook.test') /}
-        {{param description: getText('bitbucket.webhook.test.description') /}}
+        {param labelContent: getText('stash.webhook.test') /}
+        {param labelHtml: getText('stash.webhook.test') /}
+        {{param description: getText('stash.webhook.test.description') /}}
         {param input}
             {call widget.aui.form.button}
                 {param id: 'testButton' /}
-                {param label: getText('bitbucket.webhook.test.button.label') /}
-                {param tooltip: getText('bitbucket.webhook.test.button.tooltip') /}
+                {param label: getText('stash.webhook.test.button.label') /}
+                {param tooltip: getText('stash.webhook.test.button.tooltip') /}
             {/call}
         {/param}
     {/call}
 
     <hr />
 
-    <h3>{getText('bitbucket.webhook.advancedConfiguration.label')}</h3>
+    <h3>{getText('stash.webhook.advancedConfiguration.label')}</h3>
 
     {call aui.form.textField}
         {param id: 'ignoreCommitters' /}
         {param value: $config['ignoreCommitters'] /}
         {param labelContent}
-            {getText('bitbucket.webhook.ignoreCommitters.label')}
+            {getText('stash.webhook.ignoreCommitters.label')}
         {/param}
-        {param descriptionText: getText('bitbucket.webhook.ignoreCommitters.description') /}
+        {param descriptionText: getText('stash.webhook.ignoreCommitters.description') /}
         {param extraClasses: 'long' /}
         {param errorTexts: $errors ? $errors['ignoreCommitters'] : null /}
     {/call}
 
     <div class="field-group">
-        <label for="branchOptions">{getText('bitbucket.webhook.repo.branchOptions.label')}</label>
+        <label for="branchOptions">{getText('stash.webhook.repo.branchOptions.label')}</label>
         <select class="select" id="branchOptions" name="branchOptions" style="max-width: 110px">
             <option value="" {($config['branchOptions'] == null) ? 'selected="selected"' : ''}>Build all</option>
             <option value="whitelist" {($config['branchOptions'] == 'whitelist') ? 'selected="selected"' : ''}>Build from:</option>
@@ -119,7 +119,7 @@
         &nbsp;
         <input id="branchOptionsBranches" style="max-width: 400px" class="text" type="text" name="branchOptionsBranches" value="{($config['branchOptionsBranches'] != null) ? $config['branchOptionsBranches'] : ''}">
         <div class="description">
-            {getText('bitbucket.webhook.repo.branchOptions.description')}
+            {getText('stash.webhook.repo.branchOptions.description')}
         </div>
         {(($errors) ? '<div class="error">' + $errors['branchOptionsBranches'] + '</div>' : '')|noAutoescape}
     </div>

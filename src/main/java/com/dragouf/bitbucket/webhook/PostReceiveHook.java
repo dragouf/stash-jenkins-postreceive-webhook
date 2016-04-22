@@ -1,9 +1,7 @@
 package com.dragouf.bitbucket.webhook;
 
 import java.util.Collection;
-
 import javax.annotation.Nonnull;
-
 import com.atlassian.bitbucket.hook.repository.AsyncPostReceiveRepositoryHook;
 import com.atlassian.bitbucket.hook.repository.RepositoryHookContext;
 import com.atlassian.bitbucket.repository.RefChange;
@@ -55,6 +53,7 @@ public class PostReceiveHook implements AsyncPostReceiveRepositoryHook,
     }
 
     final String branchSelection = settings.getString(Notifier.BRANCH_OPTIONS);
+
     if (!Strings.isNullOrEmpty(branchSelection)) {
       String branches = settings.getString(Notifier.BRANCH_OPTIONS_BRANCHES);
       if (Strings.isNullOrEmpty(branches)) {

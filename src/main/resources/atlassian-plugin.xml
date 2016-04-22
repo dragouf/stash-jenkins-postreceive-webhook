@@ -29,6 +29,7 @@
     <component-import key="sshScmProtocol" interface="com.atlassian.bitbucket.scm.ssh.SshScmProtocol"/>
     <component-import key="httpScmProtocol" interface="com.atlassian.bitbucket.scm.http.HttpScmProtocol"/>
     <component-import key="sshConfigurationService" interface="com.atlassian.bitbucket.ssh.SshConfigurationService"/>
+    <component-import key="pullRequestService" interface="com.atlassian.bitbucket.pull.PullRequestService"/>
 
     <resource type="i18n" name="i18n" location="i18n/bitbucket-webhook-jenkins"/>
 

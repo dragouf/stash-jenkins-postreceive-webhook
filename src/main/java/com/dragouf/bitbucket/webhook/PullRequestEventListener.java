@@ -4,6 +4,8 @@ import com.atlassian.event.api.EventListener;
 import com.atlassian.bitbucket.event.pull.PullRequestEvent;
 import com.atlassian.bitbucket.event.pull.PullRequestOpenedEvent;
 import com.atlassian.bitbucket.event.pull.PullRequestReopenedEvent;
+import com.atlassian.bitbucket.event.pull.PullRequestRescopedEvent;
+import com.atlassian.bitbucket.pull.PullRequestService;
 import com.dragouf.bitbucket.webhook.service.SettingsService;
 import com.dragouf.bitbucket.webhook.service.eligibility.EligibilityFilterChain;
 import com.dragouf.bitbucket.webhook.service.eligibility.EventContext;
@@ -19,6 +21,7 @@ public class PullRequestEventListener {
   private final EligibilityFilterChain filterChain;
   private final Notifier notifier;
   private final SettingsService settingsService;
+  private final PullRequestService pullRequestService;
 
   /**
    * Construct a new instance.
@@ -27,10 +30,31 @@ public class PullRequestEventListener {
    * @param settingsService Service to be used to get the Settings
    */
   public PullRequestEventListener(EligibilityFilterChain filterChain,
-      Notifier notifier, SettingsService settingsService) {
+                           Notifier notifier,
+                           SettingsService settingsService,
+                           PullRequestService pullRequestService) {
     this.filterChain = filterChain;
     this.notifier = notifier;
     this.settingsService = settingsService;
+    this.pullRequestService = pullRequestService;
+  }
+
+  @EventListener
+  public void onPullRequestRescoped(PullRequestRescopedEvent event) {
+    final String previousHash = event.getPreviousFromHash();
+    final String currentHash = event.getPullRequest().getFromRef().getLatestCommit();
+    final Integer prId = event.getPullRequest().getToRef().getRepository().getId();
+
+    //Using getToRef() here is required; pull requests are "scoped" to their target repository
+    final Boolean canMerge = pullRequestService.canMerge(prId, event.getPullRequest().getId()).isConflicted();
+
+    //Only trigger this if the pull request was rescoped on the from side, meaning new changes
+    //were pushed. Doing this after every change on the to side will cause severe performance
+    //degradation for your Stash server because it happens too often
+    if (!previousHash.equals(currentHash) && canMerge) {
+      //Notify Jenkins; the pull request refs have been updated
+      handleEvent(event);
+    }
   }
 
   /**
@@ -62,16 +86,21 @@ public class PullRequestEventListener {
       return;
     }
 
-    String strRef = event.getPullRequest().getFromRef().toString()
-        .replaceFirst(".*refs/heads/", "");
+    String strRef = event.getPullRequest()
+      .getFromRef()
+      .toString()
+      .replaceFirst(".*refs/heads/", "");
+
     String strSha1 = event.getPullRequest().getFromRef().getLatestCommit();
 
     EventContext context = new EventContext(event,
         event.getPullRequest().getToRef().getRepository(),
         event.getUser().getName());
 
+    String prId = Long.toString(event.getPullRequest().getId());
+
     if (filterChain.shouldDeliverNotification(context))
-      notifier.notifyBackground(context.getRepository(), strRef, strSha1);
+      notifier.notifyBackground(context.getRepository(), strRef, strSha1, prId);
   }
 
 }
