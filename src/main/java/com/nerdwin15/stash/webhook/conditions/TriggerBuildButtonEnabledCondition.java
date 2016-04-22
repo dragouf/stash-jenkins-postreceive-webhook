@@ -47,7 +47,7 @@ public class TriggerBuildButtonEnabledCondition implements Condition {
 
         if (settings != null) {
             Boolean shouldOmitTriggerBuildButton = settings.getBoolean(OMIT_TRIGGER_BUILD_BUTTON);
-            return shouldOmitTriggerBuildButton == null ? true : !shouldOmitTriggerBuildButton;
+            return shouldOmitTriggerBuildButton == null || !shouldOmitTriggerBuildButton;
         }
 
         return true;
