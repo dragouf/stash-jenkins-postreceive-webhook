@@ -2,13 +2,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.nerdwin15.stash</groupId>
-    <artifactId>stash-webhook-jenkins</artifactId>
-    <version>3.0.2-SNAPSHOT</version>
+    <groupId>com.dragouf.stash</groupId>
+    <artifactId>bitbucket-webhook-jenkins</artifactId>
+    <version>4.0.0</version>
 
     <organization>
-        <name>Nerdwin15</name>
-        <url>http://www.nerdwin15.com/</url>
+        <name>Dragouf</name>
+        <url>https://github.com/dragouf</url>
     </organization>
 
     <name>Bitbucket Server Webhook to Jenkins</name>
@@ -185,9 +185,9 @@
     </properties>
 
     <scm>
-        <connection>scm:git:ssh://git@github.com/Nerdwin15/stash-jenkins-postreceive-webhook.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/Nerdwin15/stash-jenkins-postreceive-webhook.git</developerConnection>
-        <url>https://github.com/Nerdwin15/stash-jenkins-postreceive-webhook</url>
+        <connection>scm:git:ssh://git@github.com/dragouf/stash-jenkins-postreceive-webhook.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/dragouf/stash-jenkins-postreceive-webhook.git</developerConnection>
+        <url>https://github.com/dragouf/stash-jenkins-postreceive-webhook</url>
     </scm>
 
     <repositories>

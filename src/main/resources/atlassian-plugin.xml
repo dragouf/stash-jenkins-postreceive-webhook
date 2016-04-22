@@ -10,27 +10,27 @@
 
     <component-import key="applicationProperties" interface="com.atlassian.sal.api.ApplicationProperties"/>
 
-    <component key="branchEvaluator" class="com.nerdwin15.stash.webhook.service.ConcreteBranchEvaluator" />
+    <component key="branchEvaluator" class="com.dragouf.bitbucket.webhook.service.ConcreteBranchEvaluator" />
 
     <!-- Eligibility Filter Setup -->
-    <component key="branchesFilter" class="com.nerdwin15.stash.webhook.service.eligibility.BranchEligibilityFilter" />
-    <component key="ignoreCommitersFilter" class="com.nerdwin15.stash.webhook.service.eligibility.IgnoreCommittersEligibilityFilter" />
-    <component key="isMergeableEligibilityFilter" class="com.nerdwin15.stash.webhook.service.eligibility.IsMergeableEligibilityFilter" />
-    <component key="pullRequestRescopeEligibilityFilter" class="com.nerdwin15.stash.webhook.service.eligibility.PullRequestRescopeEligibilityFilter" />
-    <component key="eligibilityFilterChain" class="com.nerdwin15.stash.webhook.service.eligibility.ConcreteEligibilityFilterChain" />
+    <component key="branchesFilter" class="com.dragouf.bitbucket.webhook.service.eligibility.BranchEligibilityFilter" />
+    <component key="ignoreCommitersFilter" class="com.dragouf.bitbucket.webhook.service.eligibility.IgnoreCommittersEligibilityFilter" />
+    <component key="isMergeableEligibilityFilter" class="com.dragouf.bitbucket.webhook.service.eligibility.IsMergeableEligibilityFilter" />
+    <component key="pullRequestRescopeEligibilityFilter" class="com.dragouf.bitbucket.webhook.service.eligibility.PullRequestRescopeEligibilityFilter" />
+    <component key="eligibilityFilterChain" class="com.dragouf.bitbucket.webhook.service.eligibility.ConcreteEligibilityFilterChain" />
 
     <!-- Event listeners -->    
-    <component key="repoChangeListener" class="com.nerdwin15.stash.webhook.RepositoryChangeListener"/>
-    <component key="pullRequestRescopeListener" class="com.nerdwin15.stash.webhook.PullRequestEventListener" />
+    <component key="repoChangeListener" class="com.dragouf.bitbucket.webhook.RepositoryChangeListener"/>
+    <component key="pullRequestRescopeListener" class="com.dragouf.bitbucket.webhook.PullRequestEventListener" />
 
-    <component key="settingsRetriever" class="com.nerdwin15.stash.webhook.service.ConcreteSettingsService" />
-    <component key="jenkinsNotifier" class="com.nerdwin15.stash.webhook.Notifier"/>
-    <component key="clientFactory" class="com.nerdwin15.stash.webhook.service.ConcreteHttpClientFactory"/>
+    <component key="settingsRetriever" class="com.dragouf.bitbucket.webhook.service.ConcreteSettingsService" />
+    <component key="jenkinsNotifier" class="com.dragouf.bitbucket.webhook.Notifier"/>
+    <component key="clientFactory" class="com.dragouf.bitbucket.webhook.service.ConcreteHttpClientFactory"/>
     <component-import key="sshScmProtocol" interface="com.atlassian.bitbucket.scm.ssh.SshScmProtocol"/>
     <component-import key="httpScmProtocol" interface="com.atlassian.bitbucket.scm.http.HttpScmProtocol"/>
     <component-import key="sshConfigurationService" interface="com.atlassian.bitbucket.ssh.SshConfigurationService"/>
 
-    <resource type="i18n" name="i18n" location="i18n/stash-webhook-jenkins"/>
+    <resource type="i18n" name="i18n" location="i18n/bitbucket-webhook-jenkins"/>
 
     <rest key="jenkins-rest" path="/jenkins" version="1.0">
         <dispatcher>REQUEST</dispatcher>
@@ -39,14 +39,14 @@
             <param-name>extension.filter.excludes</param-name>
             <param-value>.*</param-value>
         </init-param>
-        <package>com.nerdwin15.stash.webhook.rest</package>
+        <package>com.dragouf.stash.webhook.rest</package>
     </rest>
     
-    <repository-hook key="jenkinsPostReceiveHook" name="${project.name}" class="com.nerdwin15.stash.webhook.PostReceiveHook">
+    <repository-hook key="jenkinsPostReceiveHook" name="${project.name}" class="com.dragouf.bitbucket.webhook.PostReceiveHook">
         <description>Webhook for notifying a configured endpoint of changes to this repository.</description>
         <icon>icons/icon.png</icon>
         <config-form name="Simple Hook Config" key="simpleHook-config">
-            <view>com.nerdwin15.stash.webhook.formContents</view>
+            <view>com.dragouf.stash.webhook.formContents</view>
             <directory location="/static/"/>
         </config-form>
     </repository-hook>
@@ -55,7 +55,7 @@
         <directory location="/static/">
             <exclude>/**/*.soy</exclude>
         </directory>
-        <context>com.nerdwin15.stash.webhook</context>
+        <context>com.dragouf.stash.webhook</context>
         <dependency>com.atlassian.auiplugin:aui-experimental-spinner</dependency>
     </client-resource>
     
@@ -65,8 +65,8 @@
                 <param name="state">OPEN</param>
             </condition>
             <condition class="com.atlassian.bitbucket.web.conditions.CanMergePullRequestCondition"/>
-            <condition class="com.nerdwin15.stash.webhook.conditions.WebhookIsEnabledCondition" />
-            <condition class="com.nerdwin15.stash.webhook.conditions.TriggerBuildButtonEnabledCondition" />
+            <condition class="com.dragouf.bitbucket.webhook.conditions.WebhookIsEnabledCondition" />
+            <condition class="com.dragouf.bitbucket.webhook.conditions.TriggerBuildButtonEnabledCondition" />
         </conditions>
         <label key="stash.web.pull-request.toolbar.triggerJenkins">Trigger Build</label>
         <styleClass>triggerJenkinsBuild</styleClass>
